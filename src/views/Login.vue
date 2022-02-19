@@ -9,7 +9,7 @@
       <!-- <p>Your first step toward a better financial lifestyle starts here.</p> -->
     </div>
     <div class="hero-form">
-      <form>
+      <form @submit.prevent="loginUser">
         <header>
           <h1>Holla</h1>
           <p>Sign in to the vibe</p>
@@ -29,6 +29,7 @@
             placeholder="Enter Email or Username"
             @focus="addGreen"
             @blur="removeGreen"
+            v-model="loginDetails.email"
           />
         </app-input>
         <app-input>
@@ -39,6 +40,7 @@
             placeholder="Enter Password"
             @focus="addGreen"
             @blur="removeGreen"
+            v-model="loginDetails.password"
           />
         </app-input>
 
@@ -68,6 +70,8 @@
 
 <script>
 import AppInput from "@/components/AppInput";
+import axios from "axios";
+
 export default {
   name: "Login",
   components: {
@@ -79,6 +83,11 @@ export default {
   data() {
     return {
       loginError: null,
+      loginDetails: {
+        email: "",
+        password: "",
+      },
+      BASE_URL: "https://campaign.fundall.io/",
     };
   },
   methods: {
@@ -87,6 +96,57 @@ export default {
     },
     removeGreen(e) {
       e.target.previousElementSibling.classList.remove("green");
+    },
+    loginUser() {
+      this.$emit("show-loader", true);
+      const config = {
+        method: "POST",
+        url: this.BASE_URL + "api/v1/login",
+        Headers: {
+          accept: "application/json",
+        },
+        data: this.loginDetails,
+      };
+
+      if (this.loginDetails.email == "" || this.loginDetails.password == "") {
+        this.$emit("show-loader", false);
+        this.loginError = "Email or password cannot be empty";
+
+        setTimeout(() => {
+          this.loginError = null;
+        }, 3000);
+      } else {
+        axios(config)
+          .then((response) => {
+            this.$emit("show-loader", false);
+
+            if (
+              response.status == 200 ||
+              response.data.success.status == "SUCCESS"
+            ) {
+              localStorage.setItem(
+                "fundall_token",
+                response.data.success.user.access_token
+              );
+              this.$router.push({
+                name: "Dashboard",
+              });
+            }
+          })
+          .catch((error) => {
+            this.$emit("show-loader", false);
+            console.log(error.response);
+
+            if (error.response.status === 400) {
+              this.$emit("show-loader", false);
+              this.loginError = error.response.data.error.message;
+
+              setTimeout(() => {
+                this.loginError = null;
+              }, 4000);
+            }
+          });
+      }
     },
   },
 };

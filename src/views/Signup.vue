@@ -120,28 +120,53 @@ export default {
       e.target.previousElementSibling.classList.remove("green");
     },
     registerUser() {
-      console.log(this.userDetails);
-      const config = {
-        method: "Post",
-        url: this.baseUrl + "api/v1/register",
-        headers: {
-          accept: "application/json",
-        },
-        data: this.userDetails,
-      };
+      this.$emit("show-loader", true);
 
-      axios(config)
-        .then((response) => {
-          console.log(response);
-        })
-        .catch((error) => {
-          console.log(error.response);
-          this.signupError = error.response.data.error.message;
+      if (
+        this.userDetails.password !== this.userDetails.password_confirmation
+      ) {
+        this.$emit("show-loader", false);
+        this.signupError = "Passwords do not match";
 
-          setTimeout(() => {
-            this.signupError = null;
-          }, 4000);
-        });
+        setTimeout(() => {
+          this.signupError = null;
+        }, 3000);
+      } else {
+        this.$emit("show-loader", false);
+
+        const config = {
+          method: "Post",
+          url: this.baseUrl + "api/v1/register",
+          headers: {
+            accept: "application/json",
+          },
+          data: this.userDetails,
+        };
+
+        axios(config)
+          .then((response) => {
+            if (
+              response.status === 200 ||
+              response.data.success.status === "SUCCESS"
+            ) {
+              this.$router.push({
+                name: "Login",
+                params: {
+                  signupMessage: "Account successfully created",
+                },
+              });
+            }
+          })
+          .catch((error) => {
+            this.$emit("show-loader", false);
+
+            this.signupError = error.response.data.error.message;
+
+            setTimeout(() => {
+              this.signupError = null;
+            }, 4000);
+          });
+      }
     },
   },
 };

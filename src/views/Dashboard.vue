@@ -83,6 +83,8 @@
           <label for="total">Total Actual Expenses: &#x20A6;</label>
           <input type="text" id="total" />
         </app-input>
+
+        <button type="submit">SAVE TODAY’S EXPENSES</button>
       </form>
     </div>
   </main>
@@ -106,11 +108,11 @@ export default {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  border: 1px solid red;
+  // border: 1px solid red;
 
   .dashboard-info {
     width: 40%;
-    border: 1px solid red;
+    // border: 1px solid red;
     padding: 30px;
 
     .user-info {
@@ -128,6 +130,7 @@ export default {
           height: 90px;
           display: inline-block;
           margin-right: 20px;
+          cursor: pointer;
         }
       }
       .user-name {
@@ -238,7 +241,7 @@ export default {
 
   .dashboard-form {
     width: 55%;
-    border: 1px solid red;
+    // border: 1px solid red;
     padding: 30px;
     background: #f2f3f7;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.082937);
@@ -305,6 +308,23 @@ export default {
       .input-box {
         margin-bottom: 20px;
 
+        &.inline {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+
+          input {
+            width: 7.2rem;
+            margin-left: 10px;
+          }
+          label {
+            color: $black;
+            font-family: "Circular Std", sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+          }
+        }
+
         .group {
           display: flex;
           justify-content: space-between;
@@ -316,6 +336,32 @@ export default {
           .short {
             width: 30%;
           }
+        }
+      }
+
+      button {
+        display: block;
+        width: auto;
+        margin: 0 auto;
+        background: $brand-color;
+        color: $black;
+        border: none;
+        outline: none;
+        text-transform: uppercase;
+        border-radius: 15px;
+        padding: 10px 15px;
+        font-family: "Circular Std", sans-serif;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s ease;
+
+        &:hover {
+          background: darken($color: $brand-color, $amount: 15%);
+        }
+
+        &:focus {
+          outline: 1px solid $black;
+          outline-offset: 5px;
         }
       }
     }

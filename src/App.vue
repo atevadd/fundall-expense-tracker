@@ -1,17 +1,30 @@
 <template>
   <div id="app">
     <app-navbar />
-    <router-view />
+    <router-view @show-loader="toggleLoader" />
+    <app-loader v-show="showLoader" />
   </div>
 </template>
 
 <script>
 import AppNavbar from "@/components/AppNavbar";
+import AppLoader from "@/components/AppLoader";
 
 export default {
   name: "App",
   components: {
     AppNavbar,
+    AppLoader,
+  },
+  data() {
+    return {
+      showLoader: false,
+    };
+  },
+  methods: {
+    toggleLoader(value) {
+      this.showLoader = value;
+    },
   },
 };
 </script>
