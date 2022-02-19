@@ -34,6 +34,13 @@ export default {
       }
     },
   },
+  created() {
+    if (this.$route.path !== "/") {
+      this.showNavBtn = false;
+    } else {
+      this.showNavBtn = true;
+    }
+  },
 };
 </script>
 

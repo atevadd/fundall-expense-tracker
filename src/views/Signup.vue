@@ -101,7 +101,7 @@ export default {
   },
   data() {
     return {
-      baseUrl: "https://campaign.fundall.io/",
+      BASE_URL: "https://campaign.fundall.io/",
       userDetails: {
         firstname: "",
         lastname: "",
@@ -136,7 +136,7 @@ export default {
 
         const config = {
           method: "Post",
-          url: this.baseUrl + "api/v1/register",
+          url: this.BASE_URL + "api/v1/register",
           headers: {
             accept: "application/json",
           },

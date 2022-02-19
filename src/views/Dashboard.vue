@@ -3,12 +3,18 @@
     <div class="dashboard-info">
       <div class="user-info">
         <div class="user-image">
-          <label for="image"><img src="@/assets/logo.png" alt="" /></label>
-          <input type="file" id="image" hidden />
+          <form enctype="multipart/form-data">
+            <label for="image"
+              ><img
+                :src="userDetails.avatar"
+                :alt="userDetails.firstname + ' profile picture'"
+            /></label>
+            <input type="file" id="image" @change="changeUserAvatar" hidden />
+          </form>
         </div>
         <div class="user-name">
-          <h1>Babatunde fashola</h1>
-          <p>Baba2@gmail.com</p>
+          <h1>{{ userDetails.firstname }} {{ userDetails.lastname }}</h1>
+          <p>{{ userDetails.email }}</p>
         </div>
       </div>
       <div class="user-target">
@@ -50,7 +56,9 @@
     <div class="dashboard-form">
       <div class="header">
         <div class="header-text">
-          <h2><span class="green">Welcome back,</span> Babatunde</h2>
+          <h2>
+            <span class="green">Welcome back,</span> {{ userDetails.firstname }}
+          </h2>
           <p>Now, let’s get your expenses for this month</p>
         </div>
         <img src="@/assets/dashboard-stock.png" alt="" />
@@ -92,11 +100,73 @@
 
 <script>
 import AppInput from "@/components/AppInput";
+import axios from "axios";
 
 export default {
   name: "Dashboard",
   components: {
     AppInput,
+  },
+  data() {
+    return {
+      BASE_URL: "https://campaign.fundall.io/",
+      userDetails: {},
+    };
+  },
+  methods: {
+    loadUserDetails() {
+      const token = localStorage.getItem("fundall_token");
+
+      const config = {
+        method: "GET",
+        url: this.BASE_URL + "api/v1/base/profile",
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      axios(config)
+        .then((response) => {
+          console.log(response);
+          this.userDetails = response.data.success.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    changeUserAvatar(e) {
+      const token = localStorage.getItem("fundall_token");
+
+      const file = e.target.files[0];
+
+      const userData = new FormData();
+
+      userData.append("avatar", file);
+      console.log(file);
+
+      const config = {
+        method: "POST",
+        url: this.BASE_URL + "api/v1/base/avatar",
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+        data: userData,
+      };
+
+      axios(config)
+        .then((response) => {
+          console.log(response);
+          this.loadUserDetails();
+        })
+        .catch((error) => {
+          console.log(error.response);
+        });
+    },
+  },
+  mounted() {
+    this.loadUserDetails();
   },
 };
 </script>
@@ -130,6 +200,7 @@ export default {
           height: 90px;
           display: inline-block;
           margin-right: 20px;
+          border-radius: 15px;
           cursor: pointer;
         }
       }
@@ -138,6 +209,7 @@ export default {
           color: #30443c;
           font-size: 1.75rem;
           font-family: "Circular Std", sans-serif;
+          text-transform: capitalize;
         }
         p {
           color: #30443c;
@@ -253,7 +325,7 @@ export default {
       background: #ffffff;
       box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.082937);
       border-radius: 6px;
-      padding: 15px 10px;
+      padding: 15px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -272,7 +344,7 @@ export default {
 
       img {
         position: absolute;
-        width: 210px;
+        width: 180px;
         height: 120px;
         top: -45px;
         right: 15px;
