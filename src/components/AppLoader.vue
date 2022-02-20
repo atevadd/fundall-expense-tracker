@@ -49,18 +49,11 @@ export default {
         border-radius: 50%;
         top: -10px;
         left: -10px;
-        animation: rotate 1s linear infinite;
+        animation: rotate .8s linear infinite;
       }
     }
   }
 }
 
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
+
 </style>

@@ -26,6 +26,10 @@ const routes = [
     },
   },
   {
+    path: "/login",
+    redirect: "/auth/login",
+  },
+  {
     path: "/auth/login",
     name: "Login",
     component: Login,
@@ -41,7 +45,7 @@ const routes = [
       title: "Fundall - Dashboard",
     },
   },
-  // catch all 404 error
+  // catch all pages not found
   {
     path: "*",
     redirect: "/404",

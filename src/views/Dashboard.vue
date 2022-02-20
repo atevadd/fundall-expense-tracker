@@ -4,7 +4,7 @@
       <div class="user-info">
         <div class="user-image">
           <form enctype="multipart/form-data">
-            <label for="image"
+            <label for="image" title="Change profile picture"
               ><img
                 :src="userDetails.avatar"
                 :alt="userDetails.firstname + ' profile picture'"
@@ -111,6 +111,7 @@ export default {
     return {
       BASE_URL: "https://campaign.fundall.io/",
       userDetails: {},
+      allExpensese: [],
     };
   },
   methods: {
