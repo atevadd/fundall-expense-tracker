@@ -38,30 +38,15 @@
             </tr>
           </thead>
 
-          <tr v-for="(data, index) in expenseData" :key="index">
-            <td><span class="dot"></span></td>
-            <!-- <td v-for="data.date">{{data.date.mot}}</td> -->
-            <td>&#x20A6;30,000</td>
-          </tr>
-          <!-- <tr>
-            <td><span class="dot"></span></td>
-            <td>30 Nov, 2018</td>
-            <td>&#x20A6;30,000</td>
-          </tr>
-          <tr>
-            <td><span class="dot"></span></td>
-            <td>30 Nov, 2018</td>
-            <td>&#x20A6;30,000</td>
-          </tr> -->
+          <tbody v-for="(data, index) in expenseData" :key="index">
+            <tr v-for="(record, i) in data" :key="i">
+              <td><span class="dot"></span></td>
+              <td v-if="record.date">{{ record.date }}</td>
+              <td v-if="record.amount != ''">&#x20A6;{{ record.amount }}</td>
+              <!-- <td v-if="data.amount">&#x20A6;{{ data.amount }}</td> -->
+            </tr>
+          </tbody>
         </table>
-        <!-- <vuetable
-          ref="vuetable"
-          :fields="fields"
-          :api-mode="false"
-          :data="tableData"
-          :per_page="3"
-          :track-by="1"
-        ></vuetable> -->
       </div>
     </div>
     <div class="dashboard-form">
@@ -145,6 +130,7 @@
 import AppInput from "@/components/AppInput";
 import axios from "axios";
 import Vuetable from "vuetable-2";
+import moment from "moment";
 
 export default {
   name: "Dashboard",
@@ -240,7 +226,6 @@ export default {
 
       this.expenseData.push(this.todayExpenses);
       console.log(this.expenseData);
-      console.log(this.currentDate);
 
       this.tableData = {
         total: this.expenseData.length,
@@ -271,6 +256,11 @@ export default {
     this.currentDate = `${date.getFullYear()}-0${
       date.getMonth() + 1
     }-${date.getDate()}`;
+  },
+  computed: {
+    formattedDate(expenseDate) {
+      return moment(expenseDate).format("ll");
+    },
   },
 };
 </script>
