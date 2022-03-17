@@ -19,8 +19,11 @@
       </div>
       <div class="user-target">
         <h3>Target Monthly Expenses</h3>
-        <h4>&#x20A6; 596,000</h4>
-        <progress min="0" max="1000000" value="500000"></progress>
+        <h4>
+          &#x20A6;
+          {{ monthlyExpense.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+        </h4>
+        <progress min="0" max="10000000" :value="monthlyExpense"></progress>
       </div>
       <div class="user-expense-table">
         <table>
@@ -35,7 +38,12 @@
             </tr>
           </thead>
 
-          <tr>
+          <tr v-for="(data, index) in expenseData" :key="index">
+            <td><span class="dot"></span></td>
+            <!-- <td v-for="data.date">{{data.date.mot}}</td> -->
+            <td>&#x20A6;30,000</td>
+          </tr>
+          <!-- <tr>
             <td><span class="dot"></span></td>
             <td>30 Nov, 2018</td>
             <td>&#x20A6;30,000</td>
@@ -44,13 +52,16 @@
             <td><span class="dot"></span></td>
             <td>30 Nov, 2018</td>
             <td>&#x20A6;30,000</td>
-          </tr>
-          <tr>
-            <td><span class="dot"></span></td>
-            <td>30 Nov, 2018</td>
-            <td>&#x20A6;30,000</td>
-          </tr>
+          </tr> -->
         </table>
+        <!-- <vuetable
+          ref="vuetable"
+          :fields="fields"
+          :api-mode="false"
+          :data="tableData"
+          :per_page="3"
+          :track-by="1"
+        ></vuetable> -->
       </div>
     </div>
     <div class="dashboard-form">
@@ -63,35 +74,67 @@
         </div>
         <img src="@/assets/dashboard-stock.png" alt="" />
       </div>
-      <form class="expense-form">
+      <form class="expense-form" @submit.prevent="printExpense">
         <app-input>
           <label for="tge">Target Monthly Expenses</label>
-          <input type="text" id="tge" />
+          <input type="text" id="tge" ref="expense" v-model="monthlyExpense" />
         </app-input>
         <app-input>
           <label for="date">Date</label>
-          <input type="date" id="date" />
+          <input type="date" id="date" v-model="currentDate" />
         </app-input>
         <app-input>
           <label for="tge">Today's Expenses</label>
           <div class="group">
-            <input type="text" class="long" />
-            <input type="text" class="short" />
+            <input
+              type="text"
+              class="long"
+              placeholder="Plantain"
+              v-model="todayExpenses[0].expenseName"
+            />
+            <input
+              type="text"
+              class="short"
+              placeholder="10,000"
+              v-model="todayExpenses[0].amount"
+              @keyup="calculatedExpense"
+            />
           </div>
           <div class="group">
-            <input type="text" class="long" />
-            <input type="text" class="short" />
+            <input
+              type="text"
+              class="long"
+              placeholder="Data"
+              v-model="todayExpenses[1].expenseName"
+            />
+            <input
+              type="text"
+              class="short"
+              placeholder="500"
+              v-model="todayExpenses[1].amount"
+              @keyup="calculatedExpense"
+            />
           </div>
           <div class="group">
-            <input type="text" class="long" />
-            <input type="text" class="short" />
+            <input
+              type="text"
+              class="long"
+              placeholder="Spotify sub"
+              v-model="todayExpenses[2].expenseName"
+            />
+            <input
+              type="text"
+              class="short"
+              placeholder="40000"
+              v-model="todayExpenses[2].amount"
+              @keyup="calculatedExpense"
+            />
           </div>
         </app-input>
         <app-input class="inline">
           <label for="total">Total Actual Expenses: &#x20A6;</label>
-          <input type="text" id="total" />
+          <input type="text" id="total" v-model="totalActualExpense" />
         </app-input>
-
         <button type="submit">SAVE TODAY’S EXPENSES</button>
       </form>
     </div>
@@ -101,17 +144,42 @@
 <script>
 import AppInput from "@/components/AppInput";
 import axios from "axios";
+import Vuetable from "vuetable-2";
 
 export default {
   name: "Dashboard",
   components: {
     AppInput,
+    Vuetable,
   },
   data() {
     return {
       BASE_URL: "https://campaign.fundall.io/",
       userDetails: {},
+      currentDate: "",
       allExpensese: [],
+      tableData: {},
+      monthlyExpense: 596000,
+      totalActualExpense: 0,
+      fields: ["", "Date", "Amount"],
+      todayExpenses: [
+        {
+          id: 0,
+          expenseName: "",
+          amount: "",
+        },
+        {
+          id: 1,
+          expenseName: "",
+          amount: "",
+        },
+        {
+          id: 2,
+          expenseName: "",
+          amount: "",
+        },
+      ],
+      expenseData: [],
     };
   },
   methods: {
@@ -129,7 +197,6 @@ export default {
 
       axios(config)
         .then((response) => {
-          console.log(response);
           this.userDetails = response.data.success.data;
         })
         .catch((error) => {
@@ -144,7 +211,6 @@ export default {
       const userData = new FormData();
 
       userData.append("avatar", file);
-      console.log(file);
 
       const config = {
         method: "POST",
@@ -158,16 +224,53 @@ export default {
 
       axios(config)
         .then((response) => {
-          console.log(response);
-          this.loadUserDetails();
+          if (response.status === 200) {
+            this.loadUserDetails();
+          }
         })
         .catch((error) => {
           console.log(error.response);
         });
     },
+    printExpense() {
+      // console.log(this.todayExpenses);
+      this.todayExpenses.forEach((data) => {
+        data["date"] = this.currentDate;
+      });
+
+      this.expenseData.push(this.todayExpenses);
+      console.log(this.expenseData);
+      console.log(this.currentDate);
+
+      this.tableData = {
+        total: this.expenseData.length,
+        per_page: 3,
+        current_page: 1,
+        last_page: total / 3,
+        data: this.expenseData,
+      };
+    },
+    calculatedExpense() {
+      this.totalActualExpense = `${
+        parseInt(
+          this.todayExpenses[0].amount == "" ? 0 : this.todayExpenses[0].amount
+        ) +
+        parseInt(
+          this.todayExpenses[1].amount == "" ? 0 : this.todayExpenses[1].amount
+        ) +
+        parseInt(
+          this.todayExpenses[2].amount == "" ? 0 : this.todayExpenses[2].amount
+        )
+      }.00`;
+    },
   },
-  mounted() {
+  created() {
     this.loadUserDetails();
+
+    const date = new Date();
+    this.currentDate = `${date.getFullYear()}-0${
+      date.getMonth() + 1
+    }-${date.getDate()}`;
   },
 };
 </script>
@@ -253,7 +356,7 @@ export default {
     }
 
     .user-expense-table {
-      width: 80%;
+      width: 100%;
       background: #ffffff;
       box-shadow: 0px 0px 6px rgba(77, 232, 151, 0.19);
       border-radius: 10px;
@@ -267,7 +370,7 @@ export default {
 
         caption {
           color: #30443c;
-          font-size: 0.875rem;
+          font-size: 0.75rem;
           line-height: 18px;
           text-align: left;
           margin-bottom: 15px;

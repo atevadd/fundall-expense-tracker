@@ -38,7 +38,7 @@ export default {
   p {
     text-align: center;
     font-size: 1.4rem;
-    font-weight: 700;
+    font-weight: 400;
   }
   .home-btn {
     width: max-content;
@@ -46,27 +46,18 @@ export default {
     text-align: center;
     margin-top: 30px;
     padding: 12px 25px;
-    background: linear-gradient(45deg, $black 50%, $brand-color 50%);
+    background: linear-gradient(
+      45deg,
+      $black 50%,
+      darken($color: $brand-color, $amount: 20%) 25%
+    );
     color: #fff;
     font-weight: 900;
-    transition: background 1s ease;
+    transition: all 0.2s ease;
 
     &:hover {
-      background: linear-gradient(45deg, $black 85%, $brand-color 25%);
-      // animation: slide 1.2s ease;
+      background: linear-gradient(45deg, $black 90%, $brand-color 20%);
     }
-  }
-}
-
-@keyframes slide {
-  0% {
-    background: linear-gradient(45deg, $black 50%, $brand-color 50%);
-  }
-  50% {
-    background: linear-gradient(45deg, $black 60%, $brand-color 40%);
-  }
-  100% {
-    background: linear-gradient(45deg, $black 80%, $brand-color 20%);
   }
 }
 </style>

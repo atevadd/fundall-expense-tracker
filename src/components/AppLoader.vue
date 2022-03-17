@@ -27,14 +27,14 @@ export default {
   &-wrapper {
     position: relative;
     padding: 20px;
-    background: #fff;
+    // background: #fff;
     border-radius: 10px;
 
     .loader {
       position: relative;
       width: 120px;
       height: 120px;
-      border: 10px solid rgba($color: #000000, $alpha: 0.4);
+      border: 10px solid rgba($color: #ffffff, $alpha: 1);
       border-radius: 50%;
 
       &::before {
@@ -42,18 +42,16 @@ export default {
         position: absolute;
         width: 100px;
         height: 100px;
-        border: 10px solid rgba($color: green, $alpha: 1);
+        border: 10px solid rgba($color: $brand-color, $alpha: 1);
         border-bottom-color: transparent;
         border-right-color: transparent;
         border-left-color: transparent;
         border-radius: 50%;
         top: -10px;
         left: -10px;
-        animation: rotate .8s linear infinite;
+        animation: rotate 0.8s linear infinite;
       }
     }
   }
 }
-
-
 </style>
