@@ -159,11 +159,19 @@ export default {
   align-items: flex-start;
   justify-content: space-around;
 
+  @include mobile {
+    flex-direction: column;
+  }
+
   .hero-text {
     // border: 1px solid red;
     width: 35%;
     align-self: flex-start;
     transform: translateY(100px);
+
+    @include mobile {
+      display: none;
+    }
 
     img {
       display: block;
@@ -189,12 +197,20 @@ export default {
   .hero-form {
     width: 50%;
 
+    @include mobile {
+      width: 100%;
+    }
+
     form {
       background: #fff;
       box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.082937);
       border-radius: 6px;
       display: block;
       padding: 40px 70px;
+
+      @include mobile {
+        padding: 40px 20px;
+      }
 
       header {
         margin-bottom: 60px;

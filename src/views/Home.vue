@@ -27,21 +27,35 @@ export default {
 
   img {
     margin-bottom: 30px;
+    @include mobile {
+      margin-top: 70px;
+    }
   }
   h1 {
     font-size: 2.5rem;
     font-weight: 900;
     font-family: "Circular Std", sans-serif;
+    @include mobile {
+      font-size: 2rem;
+      text-align: center;
+    }
   }
   p {
     font-size: 2.5rem;
     font-weight: 400;
     font-family: "Circular Std", sans-serif;
+    @include mobile {
+      font-size: 2rem;
+      text-align: center;
+    }
   }
   small {
     margin-top: 74px;
     font-family: "Circular Std", sans-serif;
     font-size: 1.5rem;
+    @include mobile {
+      flex-direction: column;
+    }
   }
 }
 </style>

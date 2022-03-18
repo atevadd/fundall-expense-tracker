@@ -249,12 +249,21 @@ export default {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  // border: 1px solid red;
+
+  @include mobile {
+    flex-direction: column;
+  }
 
   .dashboard-info {
     width: 40%;
     // border: 1px solid red;
     padding: 30px;
+
+    @include mobile {
+      width: 100%;
+      margin-bottom: 60px;
+      padding: 10px;
+    }
 
     .user-info {
       width: 100%;
@@ -392,6 +401,11 @@ export default {
     border-radius: 6px;
     transform: translateY(-30px);
 
+    @include mobile {
+      width: 100%;
+      padding: 30px 10px;
+    }
+
     .header {
       position: relative;
       background: #ffffff;
@@ -428,6 +442,10 @@ export default {
       padding: 0 20px;
       margin: 25px 0 0;
 
+      @include mobile {
+        padding: 0 10px;
+      }
+
       label {
         display: inline-block;
         color: #000000;
@@ -443,6 +461,10 @@ export default {
         display: block;
         outline: none;
         padding: 0 15px;
+
+        @include mobile {
+          width: 100%;
+        }
 
         &:focus {
           border-color: $brand-color;

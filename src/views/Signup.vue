@@ -6,6 +6,7 @@
       <p>Your first step toward a better financial lifestyle starts here.</p>
     </div>
     <div class="hero-form">
+      <!-- The Signup form -->
       <form @submit.prevent="registerUser">
         <div class="page-error" v-show="signupError">{{ signupError }}</div>
         <div class="group">
@@ -119,7 +120,9 @@ export default {
     removeGreen(e) {
       e.target.previousElementSibling.classList.remove("green");
     },
+    // Signup user
     registerUser() {
+      // Show the app loader
       this.$emit("show-loader", true);
 
       if (
@@ -179,11 +182,19 @@ export default {
   align-items: flex-start;
   justify-content: space-around;
 
+  @include mobile {
+    flex-direction: column;
+  }
+
   .hero-text {
     // border: 1px solid red;
     width: 35%;
     align-self: flex-start;
     transform: translateY(50px);
+    @include mobile {
+      width: 100%;
+      display: none;
+    }
 
     img {
       display: block;
@@ -210,12 +221,20 @@ export default {
     position: relative;
     width: 50%;
 
+    @include mobile {
+      width: 100%;
+    }
+
     form {
       background: #fff;
       box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.082937);
       border-radius: 6px;
       display: block;
       padding: 40px 70px;
+
+      @include mobile {
+        padding: 40px 20px;
+      }
     }
 
     .group {
