@@ -23,7 +23,7 @@
           &#x20A6;
           {{ monthlyExpense.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
         </h4>
-        <progress min="0" max="10000000" :value="monthlyExpense"></progress>
+        <progress min="0" max="1500000" :value="monthlyExpense"></progress>
       </div>
       <div class="user-expense-table">
         <table>
@@ -38,12 +38,11 @@
             </tr>
           </thead>
 
-          <tbody v-for="(data, index) in expenseData" :key="index">
-            <tr v-for="(record, i) in data" :key="i">
+          <tbody>
+            <tr v-for="(expense, index) in allExpenses" :key="index">
               <td><span class="dot"></span></td>
-              <td v-if="record.date">{{ record.date }}</td>
-              <td v-if="record.amount != ''">&#x20A6;{{ record.amount }}</td>
-              <!-- <td v-if="data.amount">&#x20A6;{{ data.amount }}</td> -->
+              <td>{{ formattedDate(expense.date) }}</td>
+              <td>&#x20A6;{{ expense.amount }}</td>
             </tr>
           </tbody>
         </table>
@@ -71,47 +70,32 @@
         <app-input>
           <label for="tge">Today's Expenses</label>
           <div class="group">
-            <input
-              type="text"
-              class="long"
-              placeholder="Plantain"
-              v-model="todayExpenses[0].expenseName"
-            />
+            <input type="text" class="long" placeholder="Plantain" />
             <input
               type="text"
               class="short"
               placeholder="10,000"
-              v-model="todayExpenses[0].amount"
+              v-model="expenseFields.one"
               @keyup="calculatedExpense"
             />
           </div>
           <div class="group">
-            <input
-              type="text"
-              class="long"
-              placeholder="Data"
-              v-model="todayExpenses[1].expenseName"
-            />
+            <input type="text" class="long" placeholder="Data" />
             <input
               type="text"
               class="short"
               placeholder="500"
-              v-model="todayExpenses[1].amount"
+              v-model="expenseFields.two"
               @keyup="calculatedExpense"
             />
           </div>
           <div class="group">
-            <input
-              type="text"
-              class="long"
-              placeholder="Spotify sub"
-              v-model="todayExpenses[2].expenseName"
-            />
+            <input type="text" class="long" placeholder="Spotify sub" />
             <input
               type="text"
               class="short"
               placeholder="40000"
-              v-model="todayExpenses[2].amount"
+              v-model="expenseFields.three"
               @keyup="calculatedExpense"
             />
           </div>
@@ -143,29 +127,17 @@ export default {
       BASE_URL: "https://campaign.fundall.io/",
       userDetails: {},
       currentDate: "",
-      allExpensese: [],
+      allExpenses: [],
       tableData: {},
       monthlyExpense: 596000,
       totalActualExpense: 0,
       fields: ["", "Date", "Amount"],
-      todayExpenses: [
-        {
-          id: 0,
-          expenseName: "",
-          amount: "",
-        },
-        {
-          id: 1,
-          expenseName: "",
-          amount: "",
-        },
-        {
-          id: 2,
-          expenseName: "",
-          amount: "",
-        },
-      ],
-      expenseData: [],
+      currentExpense: {},
+      expenseFields: {
+        one: "",
+        two: "",
+        three: "",
+      },
     };
   },
   methods: {
@@ -219,34 +191,26 @@ export default {
         });
     },
     printExpense() {
-      // console.log(this.todayExpenses);
-      this.todayExpenses.forEach((data) => {
-        data["date"] = this.currentDate;
-      });
-
-      this.expenseData.push(this.todayExpenses);
-      console.log(this.expenseData);
-
-      this.tableData = {
-        total: this.expenseData.length,
-        per_page: 3,
-        current_page: 1,
-        last_page: total / 3,
-        data: this.expenseData,
+      this.currentExpense = {
+        date: this.currentDate,
+        amount: this.totalActualExpense,
       };
+
+      if (this.allExpenses.length !== 4) {
+        this.allExpenses.unshift(this.currentExpense);
+      }
+
+      console.log(this.allExpenses);
     },
     calculatedExpense() {
       this.totalActualExpense = `${
-        parseInt(
-          this.todayExpenses[0].amount == "" ? 0 : this.todayExpenses[0].amount
-        ) +
-        parseInt(
-          this.todayExpenses[1].amount == "" ? 0 : this.todayExpenses[1].amount
-        ) +
-        parseInt(
-          this.todayExpenses[2].amount == "" ? 0 : this.todayExpenses[2].amount
-        )
+        parseInt(this.expenseFields.one == "" ? 0 : this.expenseFields.one) +
+        parseInt(this.expenseFields.two == "" ? 0 : this.expenseFields.two) +
+        parseInt(this.expenseFields.three == "" ? 0 : this.expenseFields.three)
       }.00`;
+    },
+    formattedDate(expenseDate) {
+      return moment(expenseDate).format("ll");
     },
   },
   created() {
@@ -256,11 +220,6 @@ export default {
     this.currentDate = `${date.getFullYear()}-0${
       date.getMonth() + 1
     }-${date.getDate()}`;
-  },
-  computed: {
-    formattedDate(expenseDate) {
-      return moment(expenseDate).format("ll");
-    },
   },
 };
 </script>
@@ -389,6 +348,7 @@ export default {
         }
         tr {
           border-bottom: 0.5px solid #e3ece5;
+          animation: slideup 0.3s ease;
 
           &:last-child {
             td {
