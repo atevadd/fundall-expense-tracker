@@ -39,10 +39,19 @@
           </thead>
 
           <tbody>
-            <tr v-for="(expense, index) in allExpenses" :key="index">
+            <tr
+              v-for="(expense, index) in allExpenses.slice(0, 4)"
+              :key="index"
+            >
               <td><span class="dot"></span></td>
               <td>{{ formattedDate(expense.date) }}</td>
-              <td>&#x20A6;{{ expense.amount }}</td>
+              <td>
+                &#x20A6;{{
+                  expense.amount
+                    .toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                }}
+              </td>
             </tr>
           </tbody>
         </table>
@@ -58,7 +67,7 @@
         </div>
         <img src="@/assets/dashboard-stock.png" alt="" />
       </div>
-      <form class="expense-form" @submit.prevent="printExpense">
+      <form class="expense-form" @submit.prevent="addExpense">
         <app-input>
           <label for="tge">Target Monthly Expenses</label>
           <input type="text" id="tge" ref="expense" v-model="monthlyExpense" />
@@ -190,17 +199,25 @@ export default {
           console.log(error.response);
         });
     },
-    printExpense() {
+    addExpense() {
       this.currentExpense = {
         date: this.currentDate,
         amount: this.totalActualExpense,
       };
 
-      if (this.allExpenses.length !== 4) {
-        this.allExpenses.unshift(this.currentExpense);
-      }
+      this.allExpenses.unshift(this.currentExpense);
 
-      console.log(this.allExpenses);
+      // storing all expenses in local storge
+      localStorage.setItem("fundall-expense", JSON.stringify(this.allExpenses));
+    },
+    loadExpenseFromStorage() {
+      const userExpense = JSON.parse(localStorage.getItem("fundall-expense"));
+
+      if (userExpense == null) {
+        localStorage.setItem("fundall-expense", "[]");
+      } else {
+        this.allExpenses = userExpense;
+      }
     },
     calculatedExpense() {
       this.totalActualExpense = `${
@@ -215,6 +232,7 @@ export default {
   },
   created() {
     this.loadUserDetails();
+    this.loadExpenseFromStorage();
 
     const date = new Date();
     this.currentDate = `${date.getFullYear()}-0${

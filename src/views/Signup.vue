@@ -132,7 +132,7 @@ export default {
           this.signupError = null;
         }, 3000);
       } else {
-        this.$emit("show-loader", false);
+        this.$emit("show-loader", true);
 
         const config = {
           method: "Post",
